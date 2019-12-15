@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/raj47i/go-utils/config"
+	"time"
+
+	"github.com/raj47i/go-utils/daemon"
 )
 
 // Configuration holds the app configuration, struct makes it easier to load & save it as json
@@ -12,8 +14,18 @@ type Configuration struct {
 }
 
 func main() {
-	var cfg Configuration
-	fmt.Println(config.LoadFromENV(&cfg))
 
-	fmt.Println(cfg)
+	s, err := daemon.Run("go-utils")
+	if err == nil {
+		fmt.Println("App started successfully.")
+		fmt.Println(err)
+		fmt.Println("Waiting 30 seconds")
+		time.Sleep(30 * time.Second)
+		daemon.Exit(s)
+	} else if err == daemon.ErrAlreadyRunning {
+		fmt.Println("Another Instance already running")
+	} else {
+		fmt.Println(err)
+	}
+
 }
